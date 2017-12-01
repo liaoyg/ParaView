@@ -4,3 +4,7 @@
 *.pyc
 .ExternalData*
 .DS_Store
+/build
+/Examples/Plugins
+/Plugins/Paraview3DLICPlugin/noise
+/VTKData

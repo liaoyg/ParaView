@@ -42,6 +42,7 @@
 #include "vtkUnstructuredGrid.h"
 #include "vtkVolumeProperty.h"
 #include "vtkVolumeRepresentationPreprocessor.h"
+#include "vtkMultiBlockDataSet.h"
 
 #include <map>
 #include <string>
@@ -191,6 +192,10 @@ int vtkUnstructuredGridVolumeRepresentation::RequestData(
 
   if (inputVector[0]->GetNumberOfInformationObjects() == 1)
   {
+	  vtkDataObject* inputDO = vtkDataObject::GetData(inputVector[0], 0);
+	  vtkDataSet* inputDS = vtkDataSet::SafeDownCast(inputDO);
+	  vtkImageData* inputImage = vtkImageData::SafeDownCast(inputDS);
+	  vtkMultiBlockDataSet* inputMB = vtkMultiBlockDataSet::SafeDownCast(inputDO);
     this->Preprocessor->SetInputConnection(this->GetInternalOutputPort());
 
     this->Preprocessor->Update();
