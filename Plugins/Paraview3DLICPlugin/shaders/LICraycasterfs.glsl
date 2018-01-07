@@ -613,6 +613,7 @@ vec4 castRay(const float zStart, const float zEnd)
 				             
 				g_srcColor.a = computeOpacity(intensity);
 				//g_srcColor.a = clamp(scalar.a, 0 , 1); 
+				//tfData = computeColor(vec4(vec_orig.r), g_srcColor.a);
 			}
 			else
 				g_srcColor = vec4(0.0);
