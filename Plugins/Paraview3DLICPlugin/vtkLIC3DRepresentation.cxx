@@ -556,7 +556,7 @@ void vtkLIC3DRepresentation::SetVolumeStepScale(double val)
 void vtkLIC3DRepresentation::SetVolumeDimension(int x, int y, int z)
 {
 	this->ResampleToImageFilter->SetSamplingDimensions(x, y, z);
-	this->ResampleToImageFilter->Update();
+	//this->ResampleToImageFilter->Update();
 }
 //----------------------------------------------------------------------------
 const char* vtkLIC3DRepresentation::GetColorArrayName()
