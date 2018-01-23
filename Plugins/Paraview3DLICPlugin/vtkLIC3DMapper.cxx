@@ -1492,6 +1492,9 @@ void vtkLIC3DMapper::vtkInternal::CreateLICNoiseTexture(vtkRenderer* ren)
 
 		if (UseNoiseGradient && (this->LICNoiseTextureData) && !(this->LICNoiseGradientData))
 			this->LICNoiseGradientData = (unsigned char*)loadGradients("..\\..\\..\\VTKData\\noise\\noise_256_80.grd", size);
+		if (!(this->LICNoiseGradientData))
+			UseNoiseGradient = false;
+
 
 		if (!(this->LICNoiseTextureData))
 		{

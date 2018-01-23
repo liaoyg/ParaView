@@ -120,7 +120,9 @@ vtkLIC3DRepresentation::vtkLIC3DRepresentation()
 	this->Preprocessor = vtkVolumeRepresentationPreprocessor::New();
 	this->Preprocessor->SetTetrahedraOnly(1);
 	this->RayCastMapper = vtkProjectedTetrahedraMapper::New();
+
 	this->VolumeMapper = vtkLIC3DMapper::New();
+
 	this->Volume = vtkPVLODVolume::New();
 	this->VolProperty = vtkVolumeProperty::New();
 	this->VolProperty->SetInterpolationType(1);
@@ -185,18 +187,19 @@ int vtkLIC3DRepresentation::ProcessViewRequest(
 	}
 	if (request_type == vtkPVView::REQUEST_UPDATE())
 	{
-		//vtkPVRenderView::SetPiece(inInfo, this, this->CacheKeeper->GetOutputDataObject(0));
-		vtkPVRenderView::SetPiece(
-			inInfo, this, this->OutlineSource->GetOutputDataObject(0), this->DataSize);
+		vtkPVRenderView::SetPiece(inInfo, this, this->CacheKeeper->GetOutputDataObject(0));
+		//vtkPVRenderView::SetPiece(inInfo, this, this->OutlineSource->GetOutputDataObject(0), this->DataSize);
 		// BUG #14792.
 		// We report this->DataSize explicitly since the data being "delivered" is
 		// not the data that should be used to make rendering decisions based on
 		// data size.
 		outInfo->Set(vtkPVRenderView::NEED_ORDERED_COMPOSITING(), 1);
 		
-		//vtkNew<vtkMatrix4x4> matrix;
-		//this->Volume->GetMatrix(matrix.GetPointer());
-		vtkPVRenderView::SetGeometryBounds(inInfo, this->DataBounds);
+
+
+		vtkNew<vtkMatrix4x4> matrix;
+		this->Volume->GetMatrix(matrix.GetPointer());
+		vtkPVRenderView::SetGeometryBounds(inInfo, this->DataBounds, matrix.GetPointer());
 
 		// Pass partitioning information to the render view.
 		vtkPVRenderView::SetOrderedCompositingInformation(inInfo, this,
@@ -242,13 +245,6 @@ int vtkLIC3DRepresentation::RequestData(
 
 		this->Volume->SetEnableLOD(0);
 		this->VolumeMapper->SetInputConnection(this->CacheKeeper->GetOutputPort());
-
-		//vtkSmartPointer<vtkImageCast> castFilter =
-		//	vtkSmartPointer<vtkImageCast>::New();
-		//castFilter->SetInputConnection(this->CacheKeeper->GetOutputPort());
-		//castFilter->set
-		//castFilter->SetOutputScalarTypeToFloat();
-		//castFilter->Update();
 
 		vtkImageData* output = vtkImageData::SafeDownCast(this->CacheKeeper->GetOutputDataObject(0));
 		this->OutlineSource->SetBounds(output->GetBounds());
@@ -300,7 +296,7 @@ bool vtkLIC3DRepresentation::AddToView(vtkView* view)
 	if (rview)
 	{
 		//rview->GetRenderer()->AddActor(this->Actor);
-		rview->GetRenderer()->AddVolume(this->Volume);
+		rview->GetRenderer()->AddActor(this->Volume);
 		// Indicate that this is a prop to be rendered during hardware selection.
 		return this->Superclass::AddToView(view);
 	}
@@ -465,42 +461,36 @@ void vtkLIC3DRepresentation::SetScalarOpacityUnitDistance(double val)
 void vtkLIC3DRepresentation::SetVisibility(bool val)
 {
 	this->Superclass::SetVisibility(val);
-	//this->Actor->SetVisibility(val ? 1 : 0);
 	this->Volume->SetVisibility(val ? 1 : 0);
 }
 
 //----------------------------------------------------------------------------
 void vtkLIC3DRepresentation::SetOrientation(double x, double y, double z)
 {
-	//this->Actor->SetOrientation(x, y, z);
 	this->Volume->SetOrientation(x, y, z);
 }
 
 //----------------------------------------------------------------------------
 void vtkLIC3DRepresentation::SetOrigin(double x, double y, double z)
 {
-	//this->Actor->SetOrigin(x, y, z);
 	this->Volume->SetOrigin(x, y, z);
 }
 
 //----------------------------------------------------------------------------
 void vtkLIC3DRepresentation::SetPickable(int val)
 {
-	//this->Actor->SetPickable(val);
 	this->Volume->SetPickable(val);
 }
 
 //----------------------------------------------------------------------------
 void vtkLIC3DRepresentation::SetPosition(double x, double y, double z)
 {
-	//this->Actor->SetPosition(x, y, z);
 	this->Volume->SetPosition(x, y, z);
 }
 
 //----------------------------------------------------------------------------
 void vtkLIC3DRepresentation::SetScale(double x, double y, double z)
 {
-	//this->Actor->SetScale(x, y, z);
 	this->Volume->SetScale(x, y, z);
 }
 
@@ -509,12 +499,11 @@ void vtkLIC3DRepresentation::SetUserTransform(const double matrix[16])
 {
 	vtkNew<vtkTransform> transform;
 	transform->SetMatrix(matrix);
-	//this->Actor->SetUserTransform(transform.GetPointer());
 	this->Volume->SetUserTransform(transform.GetPointer());
 }
 
 //***************************************************************************
-// Forwarded to StreamLinesMapper.
+// Forwarded to LIC3DMapper.
 //----------------------------------------------------------------------------
 //
 void vtkLIC3DRepresentation::SetLICStepSize(double val)

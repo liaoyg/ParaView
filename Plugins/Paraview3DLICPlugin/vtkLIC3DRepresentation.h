@@ -58,19 +58,6 @@ public:
 	void SetVisibility(bool val) VTK_OVERRIDE;
 
 	//***************************************************************************
-	// Forwarded to vtkProperty.
-	/*virtual void SetAmbientColor(double r, double g, double b);
-	virtual void SetColor(double r, double g, double b);
-	virtual void SetDiffuseColor(double r, double g, double b);
-	virtual void SetEdgeColor(double r, double g, double b);
-	virtual void SetInterpolation(int val);
-	virtual void SetLineWidth(double val);
-	virtual void SetOpacity(double val);
-	virtual void SetPointSize(double val);
-	virtual void SetSpecularColor(double r, double g, double b);
-	virtual void SetSpecularPower(double val);
-	*/
-	//***************************************************************************
 	// Forwarded to Actor.
 	virtual void SetOrientation(double, double, double);
 	virtual void SetOrigin(double, double, double);
