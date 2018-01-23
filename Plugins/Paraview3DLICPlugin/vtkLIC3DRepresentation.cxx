@@ -115,10 +115,11 @@ vtkLIC3DRepresentation::vtkLIC3DRepresentation()
 	//this->Actor->SetEnableLOD(0);
 
 	this->ResampleToImageFilter = vtkResampleToImage::New();
-	this->ResampleToImageFilter->SetSamplingDimensions(128, 128, 128);
+	this->ResampleToImageFilter->SetSamplingDimensions(64, 64, 64);
 
 	this->Preprocessor = vtkVolumeRepresentationPreprocessor::New();
 	this->Preprocessor->SetTetrahedraOnly(1);
+	this->RayCastMapper = vtkProjectedTetrahedraMapper::New();
 
 	this->VolumeMapper = vtkLIC3DMapper::New();
 
@@ -159,6 +160,7 @@ vtkLIC3DRepresentation::~vtkLIC3DRepresentation()
 
 	this->Preprocessor->Delete();
 	this->ResampleToImageFilter->Delete();
+	this->RayCastMapper->Delete();
 	this->VolumeMapper->Delete();
 	this->VolProperty->Delete();
 	this->Volume->Delete();
@@ -260,6 +262,8 @@ int vtkLIC3DRepresentation::RequestData(
 	{
 		// when no input is present, it implies that this processes is on a node
 		// without the data input i.e. either client or render-server.
+		//this->LICMapper->RemoveAllInputs();
+		//this->RayCastMapper->RemoveAllInputs();
 		this->VolumeMapper->RemoveAllInputs();
 		this->Volume->SetEnableLOD(1);
 	}
@@ -333,16 +337,22 @@ void vtkLIC3DRepresentation::UpdateMapperParameters()
 	switch (fieldAssociation)
 	{
 	case vtkDataObject::FIELD_ASSOCIATION_CELLS:
+		//this->RayCastMapper->SetScalarMode(VTK_SCALAR_MODE_USE_CELL_FIELD_DATA);
 		this->VolumeMapper->SetScalarMode(VTK_SCALAR_MODE_USE_CELL_FIELD_DATA);
+		//this->LODMapper->SetScalarMode(VTK_SCALAR_MODE_USE_CELL_FIELD_DATA);
 		break;
 
 	case vtkDataObject::FIELD_ASSOCIATION_NONE:
+		//this->RayCastMapper->SetScalarMode(VTK_SCALAR_MODE_USE_FIELD_DATA);
 		this->VolumeMapper->SetScalarMode(VTK_SCALAR_MODE_USE_FIELD_DATA);
+		//this->LODMapper->SetScalarMode(VTK_SCALAR_MODE_USE_FIELD_DATA);
 		break;
 
 	case vtkDataObject::FIELD_ASSOCIATION_POINTS:
 	default:
+		//this->RayCastMapper->SetScalarMode(VTK_SCALAR_MODE_USE_POINT_FIELD_DATA);
 		this->VolumeMapper->SetScalarMode(VTK_SCALAR_MODE_USE_POINT_FIELD_DATA);
+		//this->LODMapper->SetScalarMode(VTK_SCALAR_MODE_USE_POINT_FIELD_DATA);
 		break;
 	}
 
