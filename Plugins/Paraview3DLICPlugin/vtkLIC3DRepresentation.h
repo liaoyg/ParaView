@@ -177,7 +177,6 @@ protected:
 	//vtkPVLODActor* Actor;
 
 	vtkVolumeRepresentationPreprocessor* Preprocessor;
-	vtkProjectedTetrahedraMapper* RayCastMapper;
 	vtkLIC3DMapper* VolumeMapper;
 	vtkVolumeProperty* VolProperty;
 	vtkPVLODVolume* Volume;
